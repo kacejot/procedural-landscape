@@ -1,6 +1,6 @@
-use super::area::Area;
+use super::Map;
 use crate::util::num::previous_power_of_two;
-use num::Zero;
+use num::Num;
 
 pub struct Chunk<T> {
     pub edge_size: usize,
@@ -9,7 +9,7 @@ pub struct Chunk<T> {
 
 impl<T> Chunk<T>
 where
-    T: Zero + Clone,
+    T: Num + Copy,
 {
     pub fn with_edge_size(edge_size: usize) -> Self {
         let edge_size = previous_power_of_two(edge_size);
@@ -18,16 +18,21 @@ where
             height_map: vec![T::zero(); edge_size * edge_size],
         }
     }
-
-    fn at_mut(&mut self, x: usize, y: usize) -> &mut T {
-        &mut self.height_map[x + self.edge_size * y]
-    }
 }
 
-impl<T: Copy> Area for Chunk<T> {
+impl<T: Num + Copy> Map for Chunk<T> {
     type ItemType = T;
+
+    fn edge_size(&self) -> usize {
+        self.edge_size
+    }
+
     fn at(&self, x: usize, y: usize) -> Self::ItemType {
         self.height_map[x + self.edge_size * y]
+    }
+
+    fn at_mut(&mut self, x: usize, y: usize) -> &mut Self::ItemType {
+        &mut self.height_map[x + self.edge_size * y]
     }
 }
 
