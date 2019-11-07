@@ -27,12 +27,46 @@ impl<T: Num + Copy> Map for Chunk<T> {
         self.edge_size
     }
 
-    fn at(&self, x: usize, y: usize) -> Self::ItemType {
-        self.height_map[x + self.edge_size * y]
+    fn in_bounds(&self, x: isize, y: isize) -> bool {
+        x >= 0 && x < self.edge_size as isize && y >= 0 && y < self.edge_size as isize
+    }
+
+    fn at(&self, x: isize, y: isize) -> Option<Self::ItemType> {
+        if !self.in_bounds(x, y) {
+            return None;
+        };
+        Some(self.height_map[x as usize + self.edge_size * y as usize])
     }
 
     fn at_mut(&mut self, x: usize, y: usize) -> &mut Self::ItemType {
         &mut self.height_map[x + self.edge_size * y]
+    }
+
+    fn square_corners(&self, x: isize, y: isize, edge_size: usize) -> Vec<Option<Self::ItemType>> {
+        let half_edge = (edge_size / 2) as isize;
+        (-half_edge..half_edge)
+            .step_by(edge_size)
+            .flat_map(|row| std::iter::repeat(row).zip((-half_edge..half_edge).step_by(edge_size)))
+            .map(move |(row, col)| self.at(x + row, y + col))
+            .collect()
+    }
+
+    fn diamond_corners(&self, x: isize, y: isize, diagonal: usize) -> Vec<Option<Self::ItemType>> {
+        let half = (diagonal / 2) as isize;
+        
+        // gives -half, 0, half, 0, -half ...
+        let sequence = (-half..=half)
+            .step_by(half as usize)
+            .chain(std::iter::once(0))
+            .cycle();
+        
+        // gives (0, -half), (half, 0), (0, half), ...
+        sequence.clone()
+            .skip(1)
+            .take(4)
+            .zip(sequence.take(4))
+            .map(|(row, col)| self.at(x + row, y + col))
+            .collect()
     }
 }
 
