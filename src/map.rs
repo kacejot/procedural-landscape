@@ -25,23 +25,22 @@ where
     fn at_mut(&mut self, x: usize, y: usize) -> &mut Self::ItemType;
 
     /// Returns corner points of the square with the center at `x`, `y` and
-    /// `edge_size` given. Edges of such square are parallel to X and Y axis
+    /// `edge` given. Edges of such square are parallel to X and Y axis
     ///
     /// Indexation starts at top left corner and continues clockwise
-    fn square_corners(&self, x: isize, y: isize, edge_size: usize) -> Vec<Option<Self::ItemType>>;
+    fn square_corners(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>>;
 
     /// Returns corner points of the diamond with the center at `x`, `y` and
     /// `diagonal` given. Diagonals of such diamond are parallel to X and Y axis
     ///
     /// Indexation starts at top corner and continues clockwise
-    fn diamond_corners(&self, x: isize, y: isize, diagonal: usize) -> Vec<Option<Self::ItemType>>;
+    fn diamond_corners(&self, x: usize, y: usize, diagonal: usize) -> Vec<Option<Self::ItemType>>;
 
     /// Returns corners and edge midpoints of the square with the center at `x`, `y` and
-    /// `edge_size` given. Edges of such square are parallel to X and Y axis
+    /// `edge` given. Edges of such square are parallel to X and Y axis
     ///
     /// Indexation starts at top left corner and continues clockwise
     ///
     /// Works similar to `square_corners` and `diamond_corners` used together
-    fn eight_neighbours(&self, x: isize, y: isize, edge_size: usize)
-        -> [Option<Self::ItemType>; 8];
+    fn eight_neighbours(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>>;
 }

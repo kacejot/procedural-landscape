@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 use super::Map;
 use crate::util::num::previous_power_of_two;
 use num::Num;
@@ -42,49 +45,49 @@ impl<T: Num + Copy> Map for Chunk<T> {
         &mut self.height_map[x + self.edge_size * y]
     }
 
-    fn square_corners(&self, x: isize, y: isize, edge_size: usize) -> Vec<Option<Self::ItemType>> {
-        let half_edge = (edge_size / 2) as isize;
-        (-half_edge..half_edge)
-            .step_by(edge_size)
-            .flat_map(|row| std::iter::repeat(row).zip((-half_edge..half_edge).step_by(edge_size)))
-            .map(move |(row, col)| self.at(x + row, y + col))
-            .collect()
-    }
+    fn square_corners(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>> {
+        let half_edge = (edge / 2) as isize;
 
-    fn diamond_corners(&self, x: isize, y: isize, diagonal: usize) -> Vec<Option<Self::ItemType>> {
-        let half = (diagonal / 2) as isize;
-        
-        // gives -half, 0, half, 0, -half ...
-        let sequence = (-half..=half)
-            .step_by(half as usize)
-            .chain(std::iter::once(0))
-            .cycle();
-        
-        // gives (0, -half), (half, 0), (0, half), ...
-        sequence.clone()
+        let sequence = [-half_edge, -half_edge, half_edge, half_edge];
+        let sequence = sequence.iter().cycle();
+
+        sequence
+            .clone()
             .skip(1)
             .take(4)
             .zip(sequence.take(4))
-            .map(|(row, col)| self.at(x + row, y + col))
+            .map(|(row, col)| self.at(x as isize + row, y as isize + col))
             .collect()
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+    fn diamond_corners(&self, x: usize, y: usize, diagonal: usize) -> Vec<Option<Self::ItemType>> {
+        let half_diagonal = (diagonal / 2) as isize;
 
-    #[test]
-    fn edge_is_2_and_len_is_4_if_create_with_edge_size_2() {
-        let chunk = Chunk::<f32>::with_edge_size(2);
-        assert_eq!(2, chunk.edge_size);
-        assert_eq!(4, chunk.height_map.len());
+        let sequence = [-half_diagonal, 0, half_diagonal, 0];
+        let sequence = sequence.iter().cycle();
+
+        sequence
+            .clone()
+            .skip(1)
+            .take(4)
+            .zip(sequence.take(4))
+            .map(|(row, col)| self.at(x as isize + row, y as isize + col))
+            .collect()
     }
 
-    #[test]
-    fn edge_is_4_and_len_is_16_if_create_with_edge_size_5() {
-        let chunk = Chunk::<f32>::with_edge_size(5);
-        assert_eq!(4, chunk.edge_size);
-        assert_eq!(16, chunk.height_map.len());
+    fn eight_neighbours(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>> {
+        let corners = self.square_corners(x, y, edge);
+        let centers = self.diamond_corners(x, y, edge);
+
+        let mut result = Vec::with_capacity(8);
+        corners
+            .iter()
+            .zip(centers.iter())
+            .for_each(|(corner, center)| {
+                result.push(*corner);
+                result.push(*center)
+            });
+
+        result
     }
 }
