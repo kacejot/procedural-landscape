@@ -74,7 +74,16 @@ fn square_corners_returns_closest_neighbours_if_2_diagonal_passed() {
 fn eight_returns_closest_neighbours_if_2_diagonal_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
-    let expected = vec![Some(1f32), Some(2f32), Some(3f32), Some(4f32), Some(5f32), Some(6f32), Some(7f32), Some(8f32)];
+    let expected = vec![
+        Some(1f32),
+        Some(2f32),
+        Some(3f32),
+        Some(4f32),
+        Some(5f32),
+        Some(6f32),
+        Some(7f32),
+        Some(8f32),
+    ];
     let diagonal = 2;
     let half = diagonal / 2;
 
@@ -83,7 +92,7 @@ fn eight_returns_closest_neighbours_if_2_diagonal_passed() {
     *chunk.at_mut(center + half, center - half) = expected[2].unwrap();
     *chunk.at_mut(center + half, center) = expected[3].unwrap();
     *chunk.at_mut(center + half, center + half) = expected[4].unwrap();
-    *chunk.at_mut(center, center  + half) = expected[5].unwrap();
+    *chunk.at_mut(center, center + half) = expected[5].unwrap();
     *chunk.at_mut(center - half, center + half) = expected[6].unwrap();
     *chunk.at_mut(center - half, center) = expected[7].unwrap();
 
