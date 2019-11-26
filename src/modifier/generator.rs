@@ -1,10 +1,9 @@
-use rand::{distributions::Uniform, rngs::StdRng, SeedableRng, Rng};
+use rand::{distributions::Uniform, rngs::StdRng, Rng, SeedableRng};
 
 use crate::modifier::randomizer::Randomizer;
 
-struct DiamondSquare
-{
-    rng: Randomizer<StdRng, Uniform<f64>, f64>,
+struct DiamondSquare {
+    rng: Randomizer<StdRng, Uniform<f64>>,
     roughness: f32,
 }
 
@@ -14,9 +13,6 @@ impl DiamondSquare {
             .with_distribution(Uniform::new(-1.0, 1.0))
             .build();
 
-        Self {
-            rng,
-            roughness,
-        }
+        Self { rng, roughness }
     }
 }

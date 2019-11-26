@@ -1,24 +1,16 @@
 use rand::{distributions::Distribution, Rng, SeedableRng};
 
-pub struct Randomizer<R, D, T>
-where
-    R: SeedableRng + Rng,
-    D: Distribution<T>,
-{
+pub struct Randomizer<R, D> {
     rng: R,
     distribution: D,
-    phantom: ::core::marker::PhantomData<T>,
 }
 
-impl<R, D, T> Randomizer<R, D, T>
+impl<R, D, T> Randomizer<R, D>
 where
-    R: SeedableRng + Rng,
     D: Distribution<T>,
+    R: SeedableRng + Rng,
 {
-    pub fn with_seedable_rng<U>(rng: U) -> WithSeedableRng<U>
-    where
-        U: SeedableRng + Rng,
-    {
+    pub fn with_seedable_rng(rng: R) -> WithSeedableRng<R> {
         WithSeedableRng { rng }
     }
 
@@ -27,10 +19,7 @@ where
     }
 }
 
-pub struct WithSeedableRng<R>
-where
-    R: SeedableRng + Rng,
-{
+pub struct WithSeedableRng<R> {
     rng: R,
 }
 
@@ -38,38 +27,31 @@ impl<R> WithSeedableRng<R>
 where
     R: SeedableRng + Rng,
 {
-    pub fn with_distribution<D, T>(self, distribution: D) -> WithDistribution<R, D, T>
+    pub fn with_distribution<D, T>(self, distribution: D) -> WithDistribution<R, D>
     where
         D: Distribution<T>,
     {
         WithDistribution {
             rng: self.rng,
             distribution,
-            phantom: ::core::marker::PhantomData,
         }
     }
 }
 
-pub struct WithDistribution<R, D, T>
-where
-    R: SeedableRng + Rng,
-    D: Distribution<T>,
-{
+pub struct WithDistribution<R, D> {
     rng: R,
     distribution: D,
-    phantom: ::core::marker::PhantomData<T>,
 }
 
-impl<R, D, T> WithDistribution<R, D, T>
+impl<R, D, T> WithDistribution<R, D>
 where
     R: SeedableRng + Rng,
     D: Distribution<T>,
 {
-    pub fn build(self) -> Randomizer<R, D, T> {
+    pub fn build(self) -> Randomizer<R, D> {
         Randomizer {
             rng: self.rng,
             distribution: self.distribution,
-            phantom: ::core::marker::PhantomData,
         }
     }
 }
