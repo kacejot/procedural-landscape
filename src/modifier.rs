@@ -1,6 +1,5 @@
 pub mod erosion;
 pub mod generator;
-pub mod randomizer;
 pub mod slope;
 
 use crate::map::Map;
