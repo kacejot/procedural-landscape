@@ -15,14 +15,6 @@ where
     R: SeedableRng + Rng,
     D: Distribution<T>,
 {
-    pub fn new(rng: R, distribution: D) -> Self {
-        Self {
-            rng,
-            distribution,
-            phantom: ::core::marker::PhantomData,
-        }
-    }
-
     pub fn with_seedable_rng<U>(rng: U) -> WithSeedableRng<U>
     where
         U: SeedableRng + Rng,
