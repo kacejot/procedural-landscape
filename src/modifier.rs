@@ -5,5 +5,8 @@ pub mod slope;
 use crate::map::Map;
 
 pub trait Modifier {
-    fn modify<M: Map>(&self, map: &mut M);
+    fn modify<M>(&mut self, map: &mut M)
+    where
+        M: Map,
+        M::ItemType: From<f64>;
 }

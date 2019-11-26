@@ -1,11 +1,10 @@
-use crate::map::Map;
-use crate::modifier::Modifier;
 use num::Num;
 use rand::{
     distributions::{DistIter, Distribution, Uniform},
-    rngs::StdRng,
-    Rng, SeedableRng,
+    Rng,
 };
+
+use crate::{map::Map, modifier::Modifier};
 
 type DiamondSquareRandomizer<R> = DistIter<Uniform<f64>, R, f64>;
 
@@ -23,21 +22,24 @@ where
         Self { rng, roughness }
     }
 
-    fn square_step<M>(&self, height_map: &mut M, step_size: usize)
+    fn square_step<M>(&mut self, height_map: &mut M, step_size: usize)
     where
         M: Map,
+        M::ItemType: Num + From<f64>,
     {
         (0..height_map.edge_size())
             .step_by(step_size)
             .flat_map(|row| std::iter::repeat(row).zip(0..height_map.edge_size()))
-            .map(|(row, column)| {
-                let corners = height_map.square_corners(row, column, step_size);
+            .for_each(|(x, y)| {
+                let _corners = height_map.square_corners(x, y, step_size);
+                // TODO: check for corners presence (None, Some)
             });
     }
 
-    fn diamond_step<M>(&self, height_map: &mut M, step_size: usize)
+    fn diamond_step<M>(&mut self, _height_map: &mut M, _step_size: usize)
     where
         M: Map,
+        M::ItemType: From<f64>,
     {
     }
 
@@ -54,9 +56,10 @@ impl<R> Modifier for DiamondSquare<R>
 where
     R: Rng,
 {
-    fn modify<M>(&self, map: &mut M)
+    fn modify<M>(&mut self, map: &mut M)
     where
         M: Map,
+        M::ItemType: From<f64>,
     {
         let mut step_size = map.edge_size();
         while step_size > 1 {

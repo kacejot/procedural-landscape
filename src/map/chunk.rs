@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod tests;
 
+use num::Num;
+
 use super::Map;
 use crate::util::num::previous_power_of_two;
-use num::Num;
 
 pub struct Chunk<T> {
     pub edge_size: usize,
@@ -49,7 +50,7 @@ impl<T: Num + Copy> Map for Chunk<T> {
         let x = x as isize;
         let y = y as isize;
         let half_edge = (edge / 2) as isize;
-        
+
         [
             self.at(x - half_edge, y - half_edge),
             self.at(x + half_edge, y - half_edge),
@@ -77,7 +78,7 @@ impl<T: Num + Copy> Map for Chunk<T> {
 
         let mut result = [None; 8];
         let mut elements = result.iter_mut();
-        for i in (0..4) {
+        for i in 0..4 {
             *elements.next().unwrap() = corners[i];
             *elements.next().unwrap() = centers[i];
         }
