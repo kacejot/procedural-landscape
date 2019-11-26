@@ -45,48 +45,42 @@ impl<T: Num + Copy> Map for Chunk<T> {
         &mut self.height_map[x + self.edge_size * y]
     }
 
-    fn square_corners(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>> {
+    fn square_corners(&self, x: usize, y: usize, edge: usize) -> [Option<Self::ItemType>; 4] {
+        let x = x as isize;
+        let y = y as isize;
         let half_edge = (edge / 2) as isize;
-
-        let sequence = [-half_edge, -half_edge, half_edge, half_edge];
-        let sequence = sequence.iter().cycle();
-
-        sequence
-            .clone()
-            .skip(1)
-            .take(4)
-            .zip(sequence.take(4))
-            .map(|(row, col)| self.at(x as isize + row, y as isize + col))
-            .collect()
+        
+        [
+            self.at(x - half_edge, y - half_edge),
+            self.at(x + half_edge, y - half_edge),
+            self.at(x + half_edge, y + half_edge),
+            self.at(x - half_edge, y + half_edge),
+        ]
     }
 
-    fn diamond_corners(&self, x: usize, y: usize, diagonal: usize) -> Vec<Option<Self::ItemType>> {
+    fn diamond_corners(&self, x: usize, y: usize, diagonal: usize) -> [Option<Self::ItemType>; 4] {
+        let x = x as isize;
+        let y = y as isize;
         let half_diagonal = (diagonal / 2) as isize;
 
-        let sequence = [-half_diagonal, 0, half_diagonal, 0];
-        let sequence = sequence.iter().cycle();
-
-        sequence
-            .clone()
-            .skip(1)
-            .take(4)
-            .zip(sequence.take(4))
-            .map(|(row, col)| self.at(x as isize + row, y as isize + col))
-            .collect()
+        [
+            self.at(x, y - half_diagonal),
+            self.at(x + half_diagonal, y),
+            self.at(x, y + half_diagonal),
+            self.at(x - half_diagonal, y),
+        ]
     }
 
-    fn eight_neighbours(&self, x: usize, y: usize, edge: usize) -> Vec<Option<Self::ItemType>> {
+    fn eight_neighbours(&self, x: usize, y: usize, edge: usize) -> [Option<Self::ItemType>; 8] {
         let corners = self.square_corners(x, y, edge);
         let centers = self.diamond_corners(x, y, edge);
 
-        let mut result = Vec::with_capacity(8);
-        corners
-            .iter()
-            .zip(centers.iter())
-            .for_each(|(corner, center)| {
-                result.push(*corner);
-                result.push(*center)
-            });
+        let mut result = [None; 8];
+        let mut elements = result.iter_mut();
+        for i in (0..4) {
+            *elements.next().unwrap() = corners[i];
+            *elements.next().unwrap() = centers[i];
+        }
 
         result
     }

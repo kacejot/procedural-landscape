@@ -19,7 +19,7 @@ fn diamond_corners_returns_center_if_0_diagonal_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
     let expected_value = 1f32;
-    let expected = vec![Some(expected_value); 4];
+    let expected = [Some(expected_value); 4];
 
     *chunk.at_mut(center, center) = expected_value;
 
@@ -30,7 +30,7 @@ fn diamond_corners_returns_center_if_0_diagonal_passed() {
 fn diamond_corners_returns_closest_neighbours_if_2_diagonal_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
-    let expected = vec![Some(1f32), Some(2f32), Some(3f32), Some(4f32)];
+    let expected = [Some(1f32), Some(2f32), Some(3f32), Some(4f32)];
     let diagonal = 2;
     let half = diagonal / 2;
 
@@ -47,7 +47,7 @@ fn square_corners_returns_center_if_0_edge_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
     let expected_value = 1f32;
-    let expected = vec![Some(expected_value); 4];
+    let expected = [Some(expected_value); 4];
 
     *chunk.at_mut(center, center) = expected_value;
 
@@ -58,7 +58,7 @@ fn square_corners_returns_center_if_0_edge_passed() {
 fn square_corners_returns_closest_neighbours_if_2_diagonal_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
-    let expected = vec![Some(1f32), Some(2f32), Some(3f32), Some(4f32)];
+    let expected = [Some(1f32), Some(2f32), Some(3f32), Some(4f32)];
     let diagonal = 2;
     let half = diagonal / 2;
 
@@ -74,7 +74,7 @@ fn square_corners_returns_closest_neighbours_if_2_diagonal_passed() {
 fn eight_returns_closest_neighbours_if_2_diagonal_passed() {
     let mut chunk = Chunk::<f32>::with_edge_size(5);
     let center = chunk.edge_size() / 2;
-    let expected = vec![
+    let expected = [
         Some(1f32),
         Some(2f32),
         Some(3f32),
