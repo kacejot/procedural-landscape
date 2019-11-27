@@ -18,7 +18,8 @@ where
     fn in_bounds(&self, x: isize, y: isize) -> bool;
 
     /// Returns copy of the value stored by `x`, `y` coordinates.
-    /// The None value return depends on implementation.
+    /// The None value should be returned when `x`, `y` are not in bounds
+    /// of the square area .
     fn at(&self, x: isize, y: isize) -> Option<Self::ItemType>;
 
     /// Returns mutable reference to the value stored by `x`, `y` coordinates.
