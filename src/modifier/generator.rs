@@ -1,3 +1,5 @@
+use std::iter::Sum;
+
 use num::Num;
 use rand::{
     distributions::{DistIter, Distribution, Uniform},
@@ -6,18 +8,18 @@ use rand::{
 
 use crate::{map::Map, modifier::Modifier};
 
-type DiamondSquareRandomizer<R> = DistIter<Uniform<f64>, R, f64>;
+type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
-struct DiamondSquare<R> {
+pub struct DiamondSquare<R> {
     rng: DiamondSquareRandomizer<R>,
-    roughness: f64,
+    roughness: f32,
 }
 
 impl<R> DiamondSquare<R>
 where
     R: Rng,
 {
-    fn new(rng: R, roughness: f64) -> Self {
+    pub fn new(rng: R, roughness: f32) -> Self {
         let rng = Uniform::new(-1.0, 1.0).sample_iter(rng);
         Self { rng, roughness }
     }
@@ -25,29 +27,37 @@ where
     fn square_step<M>(&mut self, height_map: &mut M, step_size: usize)
     where
         M: Map,
-        M::ItemType: Num + From<f64>,
+        M::ItemType: Sum + From<f32>,
     {
-        (0..height_map.edge_size())
-            .step_by(step_size)
-            .flat_map(|row| std::iter::repeat(row).zip(0..height_map.edge_size()))
-            .for_each(|(x, y)| {
-                let _corners = height_map.square_corners(x, y, step_size);
-                // TODO: check for corners presence (None, Some)
-            });
+        let half = step_size / 2;
+        let edge_size = height_map.edge_size();
+        for x in (half..edge_size).step_by(step_size) {
+            for y in (half..edge_size).step_by(step_size) {
+                let base = height_map
+                    .square_corners(x, y, step_size)
+                    .iter()
+                    .flatten()
+                    .map(|&val| val)
+                    .sum::<M::ItemType>()
+                    / M::ItemType::from(4.0);
+                *height_map.at_mut(x, y) = self.displace(base, step_size);
+            }
+        }
     }
 
     fn diamond_step<M>(&mut self, _height_map: &mut M, _step_size: usize)
     where
         M: Map,
-        M::ItemType: From<f64>,
+        M::ItemType: Sum + From<f32>,
     {
+        // TBD
     }
 
     fn displace<T>(&mut self, base: T, amplitude: usize) -> T
     where
-        T: Num + From<f64>,
+        T: Num + From<f32>,
     {
-        let amplitude = amplitude as f64;
+        let amplitude = amplitude as f32;
         base + T::from(self.rng.next().unwrap() * amplitude * self.roughness)
     }
 }
@@ -59,7 +69,7 @@ where
     fn modify<M>(&mut self, map: &mut M)
     where
         M: Map,
-        M::ItemType: From<f64>,
+        M::ItemType: Sum + From<f32>,
     {
         let mut step_size = map.edge_size();
         while step_size > 1 {

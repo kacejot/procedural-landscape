@@ -6,6 +6,7 @@ use num::Num;
 use super::Map;
 use crate::util::num::previous_power_of_two;
 
+#[derive(Debug)]
 pub struct Chunk<T> {
     pub edge_size: usize,
     pub height_map: Vec<T>,
