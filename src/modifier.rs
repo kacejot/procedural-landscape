@@ -1,6 +1,5 @@
 pub mod erosion;
 pub mod generator;
-pub mod slope;
 
 use std::iter::Sum;
 
