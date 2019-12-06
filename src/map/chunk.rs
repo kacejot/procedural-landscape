@@ -14,7 +14,7 @@ pub struct Chunk<T> {
 
 impl<T> Chunk<T>
 where
-    T: Num + Copy,
+    T: Num + Copy + std::cmp::PartialOrd,
 {
     pub fn with_edge_size(edge_size: usize) -> Self {
         let edge_size = previous_power_of_two(edge_size);

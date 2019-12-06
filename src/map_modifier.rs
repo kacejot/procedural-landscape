@@ -5,7 +5,7 @@ use std::iter::Sum;
 
 use crate::map::Map;
 
-pub trait Modifier {
+pub trait MapModifier {
     fn modify<M>(&mut self, map: &mut M)
     where
         M: Map,
