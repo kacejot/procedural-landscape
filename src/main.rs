@@ -56,8 +56,7 @@ fn to_image(mut height_map: Vec<f32>, edge_size: usize, filename: &str) -> std::
 fn main() {
     let mut chunk = Chunk::<f32>::with_edge_size(512);
 
-    let roughness = 1.0;
-    let mut ds = DiamondSquare::new(thread_rng(), roughness);
+    let mut ds = DiamondSquare::new(thread_rng());
     ds.modify(&mut chunk);
     to_image(chunk.height_map, chunk.edge_size, "terrain.png").unwrap();
 }

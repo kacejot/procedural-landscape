@@ -1,5 +1,5 @@
 [package]
-name = "regions"
+name = "procedural-landscape"
 version = "0.1.0"
 authors = ["Maxim Goncharenko <goncharenko.maxim@apriorit.com>"]
 edition = "2018"

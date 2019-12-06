@@ -12,16 +12,15 @@ type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
 pub struct DiamondSquare<R> {
     rng: DiamondSquareRandomizer<R>,
-    roughness: f32,
 }
 
 impl<R> DiamondSquare<R>
 where
     R: Rng,
 {
-    pub fn new(rng: R, roughness: f32) -> Self {
+    pub fn new(rng: R) -> Self {
         let rng = Uniform::new(-1.0, 1.0).sample_iter(rng);
-        Self { rng, roughness }
+        Self { rng }
     }
 
     fn square_step<M>(&mut self, height_map: &mut M, step_size: usize, x: usize, y: usize)
@@ -58,8 +57,7 @@ where
     where
         T: Num + From<f32>,
     {
-        let amplitude = amplitude as f32;
-        base + T::from(self.rng.next().unwrap() * amplitude * self.roughness)
+        base + T::from(self.rng.next().unwrap() * amplitude as f32)
     }
 }
 
