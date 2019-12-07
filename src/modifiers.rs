@@ -1,11 +1,11 @@
-pub mod erosion;
-pub mod generator;
+mod diamond_square;
+pub use diamond_square::DiamondSquare;
 
 use std::iter::Sum;
 
-use crate::map::Map;
+use crate::Map;
 
-pub trait MapModifier {
+pub trait Modifier {
     fn modify<M>(&mut self, map: &mut M)
     where
         M: Map,

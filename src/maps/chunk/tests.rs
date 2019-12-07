@@ -4,14 +4,14 @@ use super::*;
 fn edge_is_2_and_len_is_4_if_create_with_edge_size_2() {
     let chunk = Chunk::<f32>::with_edge_size(2);
     assert_eq!(2, chunk.edge_size);
-    assert_eq!(4, chunk.height_map.len());
+    assert_eq!(4, chunk.buffer.len());
 }
 
 #[test]
 fn edge_is_4_and_len_is_16_if_create_with_edge_size_5() {
     let chunk = Chunk::<f32>::with_edge_size(5);
     assert_eq!(4, chunk.edge_size);
-    assert_eq!(16, chunk.height_map.len());
+    assert_eq!(16, chunk.buffer.len());
 }
 
 #[test]
@@ -97,4 +97,19 @@ fn eight_returns_closest_neighbours_if_2_diagonal_passed() {
     *chunk.at_mut(center - half, center) = expected[7].unwrap();
 
     assert_eq!(expected, chunk.eight_neighbours(center, center, 2));
+}
+
+#[test]
+fn previous_power_of_two_for_0_is_0() {
+    assert_eq!(0, previous_power_of_two(0));
+}
+
+#[test]
+fn previous_power_of_two_for_4_is_4() {
+    assert_eq!(4, previous_power_of_two(4));
+}
+
+#[test]
+fn previous_power_of_two_for_5_is_4() {
+    assert_eq!(4, previous_power_of_two(5));
 }

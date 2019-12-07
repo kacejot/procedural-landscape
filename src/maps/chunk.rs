@@ -1,15 +1,16 @@
 #[cfg(test)]
 mod tests;
 
-use num::Num;
+use std::ops::BitAnd;
 
-use super::Map;
-use crate::util::num::previous_power_of_two;
+use num::{Integer, Num};
+
+use crate::Map;
 
 #[derive(Debug)]
 pub struct Chunk<T> {
     pub edge_size: usize,
-    pub height_map: Vec<T>,
+    pub buffer: Vec<T>,
 }
 
 impl<T> Chunk<T>
@@ -20,7 +21,7 @@ where
         let edge_size = previous_power_of_two(edge_size);
         Self {
             edge_size,
-            height_map: vec![T::zero(); edge_size * edge_size],
+            buffer: vec![T::zero(); edge_size * edge_size],
         }
     }
 }
@@ -40,11 +41,11 @@ impl<T: Num + Copy> Map for Chunk<T> {
         if !self.in_bounds(x, y) {
             return None;
         };
-        Some(self.height_map[x as usize + self.edge_size * y as usize])
+        Some(self.buffer[x as usize + self.edge_size * y as usize])
     }
 
     fn at_mut(&mut self, x: usize, y: usize) -> &mut Self::ItemType {
-        &mut self.height_map[x + self.edge_size * y]
+        &mut self.buffer[x + self.edge_size * y]
     }
 
     fn square_corners(&self, x: usize, y: usize, edge: usize) -> [Option<Self::ItemType>; 4] {
@@ -86,4 +87,18 @@ impl<T: Num + Copy> Map for Chunk<T> {
 
         result
     }
+}
+
+fn previous_power_of_two<T>(mut n: T) -> T
+where
+    T: Integer + Copy + BitAnd<Output = T>,
+{
+    loop {
+        let temp = n & (n - T::one());
+        if T::zero() == temp {
+            break;
+        }
+        n = temp;
+    }
+    n
 }

@@ -1,4 +1,4 @@
-pub mod chunk;
+mod chunk;
 
 pub use chunk::Chunk;
 

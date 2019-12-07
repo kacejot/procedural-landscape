@@ -6,7 +6,7 @@ use rand::{
     Rng,
 };
 
-use crate::{map::Map, map_modifier::MapModifier};
+use crate::{Map, Modifier};
 
 type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
@@ -61,7 +61,7 @@ where
     }
 }
 
-impl<R> MapModifier for DiamondSquare<R>
+impl<R> Modifier for DiamondSquare<R>
 where
     R: Rng,
 {
@@ -73,8 +73,8 @@ where
         let mut step_size = map.edge_size();
         while step_size > 1 {
             let half = step_size / 2;
-            for x in (0..map.edge_size()).step_by(step_size) {
-                for y in (0..map.edge_size()).step_by(step_size) {
+            for x in (step_size..map.edge_size() - step_size).step_by(step_size) {
+                for y in (step_size..map.edge_size() - step_size).step_by(step_size) {
                     self.square_step(map, step_size, x + half, y + half);
                     self.diamond_step(map, step_size, x + half, y);
                     self.diamond_step(map, step_size, x, y + half);
