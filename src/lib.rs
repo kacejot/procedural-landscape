@@ -10,7 +10,10 @@ use image::{png::PNGEncoder, ColorType};
 use num::{FromPrimitive, Num, ToPrimitive};
 
 // TODO: move all this stuff to Map
-fn normalize<T: Num + std::cmp::PartialOrd + Copy>(vec: &mut [T]) {
+fn normalize<T>(vec: &mut [T])
+where
+    T: Num + std::cmp::PartialOrd + Copy,
+{
     let max = *vec
         .iter()
         .max_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal))
@@ -27,9 +30,10 @@ fn normalize<T: Num + std::cmp::PartialOrd + Copy>(vec: &mut [T]) {
     }
 }
 
-fn to_bytes<T: Num + ToPrimitive + FromPrimitive + std::cmp::PartialOrd + Copy>(
-    map: &mut [T],
-) -> Vec<u8> {
+fn to_bytes<T>(map: &mut [T]) -> Vec<u8>
+where
+    T: Num + ToPrimitive + FromPrimitive + std::cmp::PartialOrd + Copy,
+{
     normalize(map);
     map.iter()
         .map(|&value| {
@@ -41,7 +45,10 @@ fn to_bytes<T: Num + ToPrimitive + FromPrimitive + std::cmp::PartialOrd + Copy>(
 }
 
 // TODO: Move to separate module
-pub fn to_image(mut height_map: Vec<f32>, edge_size: usize, filename: &str) -> std::io::Result<()> {
+pub fn to_image<T>(mut height_map: Vec<T>, edge_size: usize, filename: &str) -> std::io::Result<()>
+where
+    T: Num + ToPrimitive + FromPrimitive + std::cmp::PartialOrd + Copy,
+{
     let file = File::create(filename)?;
     let encoder = PNGEncoder::new(file);
     let bytes = to_bytes(&mut height_map);
