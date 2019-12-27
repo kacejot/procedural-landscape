@@ -12,18 +12,16 @@ type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
 pub struct DiamondSquare<R> {
     rng: DiamondSquareRandomizer<R>,
-    with_flat_border: bool,
 }
 
 impl<R> DiamondSquare<R>
 where
     R: Rng,
 {
-    pub fn new(rng: R, with_flat_border: bool) -> Self {
+    pub fn new(rng: R) -> Self {
         let rng = Uniform::new(-1.0, 1.0).sample_iter(rng);
         Self {
             rng,
-            with_flat_border,
         }
     }
 
@@ -78,17 +76,18 @@ where
         while step_size > 1 {
             let half = step_size / 2;
 
-            let border = if self.with_flat_border {
-                step_size
-            } else {
-                0
-            };
-
-            for x in (border..map.edge_size() - border).step_by(step_size) {
-                for y in (border..map.edge_size() - border).step_by(step_size) {
+            for x in (0..map.edge_size()).step_by(step_size) {
+                for y in (0..map.edge_size()).step_by(step_size) {
                     self.square_step(map, step_size, x + half, y + half);
-                    self.diamond_step(map, step_size, x + half, y);
-                    self.diamond_step(map, step_size, x, y + half);
+
+                    if y != 0 {
+                        self.diamond_step(map, step_size, x + half, y);
+                    }
+
+
+                    if x != 0 {
+                        self.diamond_step(map, step_size, x, y + half);
+                    }
                 }
             }
             step_size /= 2;
