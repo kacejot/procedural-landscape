@@ -1,18 +1,10 @@
-mod chunk;
+use num::Float;
 
-pub use chunk::Chunk;
-
-use num::Num;
-
-/// The trait for types implementing square two-dimensional flat area
-pub trait Map
-where
-    Self::ItemType: Num + Copy,
-{
+/// The trait for types implementing square two-dimensional area
+pub trait Grid {
     type ItemType;
-
     /// Returns the square area edge size
-    fn edge_size(&self) -> usize;
+    fn dimensions(&self) -> (usize, usize);
 
     /// Checks if `x`, `y` coordinates are in bounds of the area
     fn in_bounds(&self, x: isize, y: isize) -> bool;
@@ -44,4 +36,7 @@ where
     ///
     /// Works similar to `square_corners` and `diamond_corners` used together
     fn eight_neighbours(&self, x: usize, y: usize, edge: usize) -> [Option<Self::ItemType>; 8];
+
+    ///
+    fn normalize(&mut self);
 }

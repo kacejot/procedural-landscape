@@ -1,11 +1,7 @@
-use landscape::{maps::Chunk, modifiers::DiamondSquare, Modifier};
-use rand::thread_rng;
+use landscape::diamond_square;
 
 fn main() {
-    let mut chunk = Chunk::<f32>::with_edge_size(512);
-
-    let mut ds = DiamondSquare::new(thread_rng());
-    ds.modify(&mut chunk);
-    
-    landscape::to_image(chunk.buffer, chunk.edge_size, "terrain.png").unwrap();
+    let map = diamond_square::generate(rand::thread_rng(), 512);
+    let map = map.scale(0u8, 255u8);
+    landscape::to_image(&map, "terrain.png").unwrap();
 }
