@@ -1,5 +1,3 @@
-use num::Float;
-
 /// The trait for types implementing square two-dimensional area
 pub trait Grid {
     type ItemType;

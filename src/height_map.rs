@@ -3,7 +3,7 @@ mod tests;
 
 use std::ops::BitAnd;
 
-use num::{Float, Integer, Num, NumCast, ToPrimitive};
+use num::{Integer, Num, NumCast, ToPrimitive};
 
 use crate::map::Grid;
 
@@ -106,7 +106,7 @@ where
 
     pub fn scale<U>(&self, target_min: U, target_max: U) -> HeightMap<U>
     where
-        U: Num + std::cmp::PartialOrd + Copy + ToPrimitive + NumCast + std::fmt::Display
+        U: Num + std::cmp::PartialOrd + Copy + ToPrimitive + NumCast + std::fmt::Display,
     {
         let mut map = HeightMap::<U>::with_edge_size(self.edge_size());
 
@@ -117,7 +117,8 @@ where
 
         for (i, height) in self.buffer.iter().enumerate() {
             let value = target_min
-            + U::from((*height - current_min) / current_range * T::from(target_range).unwrap()).unwrap();
+                + U::from((*height - current_min) / current_range * T::from(target_range).unwrap())
+                    .unwrap();
             map.buffer[i] = value;
         }
 

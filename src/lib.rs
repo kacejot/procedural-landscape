@@ -2,12 +2,9 @@ pub mod diamond_square;
 pub mod height_map;
 pub mod map;
 
-use std::fs::File;
-
-use image::{png::PNGEncoder, ColorType};
-use num::{FromPrimitive, Num, ToPrimitive};
-
 use height_map::HeightMap;
+use image::{png::PNGEncoder, ColorType};
+use std::fs::File;
 
 // TODO: Move to separate module
 pub fn to_image(height_map: &HeightMap<u8>, filename: &str) -> std::io::Result<()> {
