@@ -1,12 +1,10 @@
-use std::iter::Sum;
-
 use num::{Float, FromPrimitive};
 use rand::{
     distributions::{DistIter, Distribution, Uniform},
     Rng,
 };
 
-use crate::{height_map::HeightMap, map::Grid};
+use crate::height_map::HeightMap;
 
 type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
@@ -27,11 +25,7 @@ where
         }
     }
 
-    pub fn modify<M>(&mut self, map: &mut M)
-    where
-        M: Grid,
-        M::ItemType: Float + Sum + Copy + FromPrimitive,
-    {
+    pub fn modify(&mut self, map: &mut HeightMap) {
         let (edge_size, _) = map.dimensions();
         let mut step_size = edge_size;
         while step_size > 1 {
@@ -52,37 +46,26 @@ where
             }
             step_size /= 2;
         }
-
         map.normalize();
     }
 
-    fn square_step<M>(&mut self, height_map: &mut M, step_size: usize, x: usize, y: usize)
-    where
-        M: Grid,
-        M::ItemType: Float + Sum + Copy + FromPrimitive,
-    {
-        let base = height_map
-            .square_corners(x, y, step_size)
+    fn square_step(&mut self, height_map: &mut HeightMap, step_size: usize, x: usize, y: usize) {
+        let base = square_corners(&height_map, x, y, step_size)
             .iter()
             .flatten()
             .copied()
-            .sum::<M::ItemType>()
-            / M::ItemType::from_f32(4.0).unwrap();
+            .sum::<f32>()
+            / 4.0;
         *height_map.at_mut(x, y) = self.displace(base, step_size);
     }
 
-    fn diamond_step<M>(&mut self, height_map: &mut M, step_size: usize, x: usize, y: usize)
-    where
-        M: Grid,
-        M::ItemType: Float + Sum + Copy + FromPrimitive,
-    {
-        let base = height_map
-            .diamond_corners(x, y, step_size)
+    fn diamond_step(&mut self, height_map: &mut HeightMap, step_size: usize, x: usize, y: usize) {
+        let base = diamond_corners(height_map, x, y, step_size)
             .iter()
             .flatten()
             .copied()
-            .sum::<M::ItemType>()
-            / M::ItemType::from_f32(4.0).unwrap();
+            .sum::<f32>()
+            / 4.0;
         *height_map.at_mut(x, y) = self.displace(base, step_size);
     }
 
@@ -94,10 +77,40 @@ where
     }
 }
 
-pub fn generate<R: Rng>(rng: R, edge_size: usize) -> HeightMap<f32> {
-    let mut map = HeightMap::<f32>::with_edge_size(edge_size);
-    let mut ds = DiamondSquare::new(rng, true);
+fn square_corners(height_map: &HeightMap, x: usize, y: usize, edge: usize) -> [Option<f32>; 4] {
+    let x = x as isize;
+    let y = y as isize;
+    let half_edge = (edge / 2) as isize;
 
+    [
+        height_map.at(x - half_edge, y - half_edge),
+        height_map.at(x + half_edge, y - half_edge),
+        height_map.at(x + half_edge, y + half_edge),
+        height_map.at(x - half_edge, y + half_edge),
+    ]
+}
+
+fn diamond_corners(
+    height_map: &HeightMap,
+    x: usize,
+    y: usize,
+    diagonal: usize,
+) -> [Option<f32>; 4] {
+    let x = x as isize;
+    let y = y as isize;
+    let half_diagonal = (diagonal / 2) as isize;
+
+    [
+        height_map.at(x, y - half_diagonal),
+        height_map.at(x + half_diagonal, y),
+        height_map.at(x, y + half_diagonal),
+        height_map.at(x - half_diagonal, y),
+    ]
+}
+
+pub fn generate<R: Rng>(rng: R, edge_size: usize) -> HeightMap {
+    let mut map = HeightMap::with_edge_size(edge_size);
+    let mut ds = DiamondSquare::new(rng, true);
     ds.modify(&mut map);
     map
 }
