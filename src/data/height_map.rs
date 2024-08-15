@@ -20,10 +20,17 @@ impl HeightMap {
         }
     }
 
-    pub fn with_multiple_chunks(chunk_size: u32, horizontal_chunk_num: u32, vertical_chunk_num: u32) -> Self {
+    pub fn with_multiple_chunks(
+        chunk_size: u32,
+        horizontal_chunk_num: u32,
+        vertical_chunk_num: u32,
+    ) -> Self {
         Self {
             chunk_size,
-            buf: vec![0.0; (chunk_size * chunk_size * horizontal_chunk_num * vertical_chunk_num) as usize],
+            buf: vec![
+                0.0;
+                (chunk_size * chunk_size * horizontal_chunk_num * vertical_chunk_num) as usize
+            ],
             horizontal_chunk_num,
             vertical_chunk_num,
             width: chunk_size * horizontal_chunk_num,
@@ -58,14 +65,8 @@ impl HeightMap {
 
     pub fn min_max(&self) -> (f32, f32) {
         (
-            self.buf
-                .iter()
-                .cloned()
-                .fold(f32::INFINITY, f32::min),
-            self.buf
-                .iter()
-                .cloned()
-                .fold(f32::NEG_INFINITY, f32::max),
+            self.buf.iter().cloned().fold(f32::INFINITY, f32::min),
+            self.buf.iter().cloned().fold(f32::NEG_INFINITY, f32::max),
         )
     }
 }

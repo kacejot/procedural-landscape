@@ -17,9 +17,7 @@ where
 {
     pub fn new(rng: R) -> Self {
         let rng = Uniform::new(-1.0, 1.0).sample_iter(rng);
-        Self {
-            rng,
-        }
+        Self { rng }
     }
 
     pub fn modify(&mut self, map: &mut HeightMap) {
@@ -80,12 +78,7 @@ fn square_corners(height_map: &HeightMap, x: u32, y: u32, edge: u32) -> [Option<
     ]
 }
 
-fn diamond_corners(
-    height_map: &HeightMap,
-    x: u32,
-    y: u32,
-    diagonal: u32,
-) -> [Option<f32>; 4] {
+fn diamond_corners(height_map: &HeightMap, x: u32, y: u32, diagonal: u32) -> [Option<f32>; 4] {
     let x = x as i32;
     let y = y as i32;
     let half_diagonal = (diagonal / 2) as i32;

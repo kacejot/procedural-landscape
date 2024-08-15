@@ -1,4 +1,7 @@
-use landscape::{modifiers::DiamondSquare, data::{HeightMap, utils}};
+use landscape::{
+    data::{utils, HeightMap},
+    modifiers::DiamondSquare,
+};
 
 fn main() {
     // TODO: make seed configurable

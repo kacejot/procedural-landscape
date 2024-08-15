@@ -9,12 +9,7 @@ pub fn to_image(buf: &Vec<u8>, width: u32, height: u32, filename: &str) -> std::
     let file = File::create(filename)?;
     let encoder = PngEncoder::new(file);
 
-    match encoder.write_image(
-        buf,
-        width,
-        height,
-        ExtendedColorType::L8,
-    ) {
+    match encoder.write_image(buf, width, height, ExtendedColorType::L8) {
         Ok(_) => Ok(()),
         Err(e) => Err(std::io::Error::new(std::io::ErrorKind::Other, e)),
     }
