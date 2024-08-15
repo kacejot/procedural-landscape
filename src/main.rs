@@ -1,7 +1,12 @@
-use landscape::{diamond_square, height_map::to_buf};
+use landscape::{modifiers::DiamondSquare, data::{HeightMap, utils}};
 
 fn main() {
-    let map = diamond_square::generate(rand::thread_rng(), 2048);
-    let buf: Vec<u8> = to_buf(&map, 0u8, 255u8);
-    landscape::to_image(&buf, map.edge_size, "terrain.png").unwrap();
+    // TODO: make seed configurable
+    // TODO: mutators should have a way to track their progress
+    let mut ds = DiamondSquare::new(rand::thread_rng());
+    let mut map = HeightMap::with_multiple_chunks(64, 3, 2);
+    ds.modify(&mut map);
+
+    let buf: Vec<u8> = utils::to_buf(&map, 0u8, 255u8);
+    landscape::to_image(&buf, map.width, map.height, "terrain.png").unwrap();
 }
