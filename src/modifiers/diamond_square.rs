@@ -5,7 +5,6 @@ use rand::{
 };
 
 use crate::data::HeightMap;
-
 type DiamondSquareRandomizer<R> = DistIter<Uniform<f32>, R, f32>;
 
 pub struct DiamondSquare<R> {
